@@ -22,8 +22,9 @@ session = None
 async def on_ready():
 	global session
 	session = aiohttp.ClientSession(loop=bot.loop)
-	print("started!")
+	print("started! (v2)")
 
+@commands.has_any_role(253725895418707979, 152151513232310272)
 @bot.command()
 async def start(ctx, container):
 	if container not in containers:
@@ -47,7 +48,7 @@ async def start(ctx, container):
 		else:
 			await ctx.send(f"Status code {r.status}")
 
-
+@commands.has_any_role(253725895418707979, 152151513232310272)
 @bot.command()
 async def stop(ctx, container):
 	if container not in containers:
