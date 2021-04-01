@@ -23,8 +23,19 @@ async def on_ready():
 	global session
 	session = aiohttp.ClientSession(loop=bot.loop)
 	print("started! (v3)")
+
+async def get_auth_token():
+	# get auth token
+	body = {
+		"Username": settings["docker"]["username"],
+		"Password": settings["docker"]["password"]
+	}
+	url = f"{settings['docker']['url']}/api/auth"
+	async with session.post(url, json=body) as r:
+		data = json.loads(await r.text())
+		return data["jwt"]
 	
-@commands.has_any_role(803116138212884510)
+@commands.has_any_role(settings["role"])
 @bot.command()
 async def start(ctx, container):
 	if container not in containers:
@@ -32,12 +43,13 @@ async def start(ctx, container):
 		return
 
 	await ctx.send("Starting...")
+	authtoken = await get_auth_token()
 
 	headers = {
-		"Authorization": f"Bearer {settings['dockertoken']}"
+		"Authorization": f"Bearer {authtoken}"
 	}
 	container = containers[container]
-	url = f"{settings['dockerurl']}/api/endpoints/1/docker/containers/{container['id']}/start"
+	url = f"{settings['docker']['url']}/api/endpoints/1/docker/containers/{container['id']}/start"
 	async with session.post(url, headers=headers) as r:
 		await ctx.send(f"Status code {r.status}")
 
@@ -48,7 +60,7 @@ async def start(ctx, container):
 		else:
 			await ctx.send(f"Status code {r.status}")
 
-@commands.has_any_role(803116138212884510)
+@commands.has_any_role(settings["role"])
 @bot.command()
 async def stop(ctx, container):
 	if container not in containers:
@@ -56,12 +68,13 @@ async def stop(ctx, container):
 		return
 
 	await ctx.send("Stopping...")
+	authtoken = await get_auth_token()
 
 	headers = {
-		"Authorization": f"Bearer {settings['dockertoken']}"
+		"Authorization": f"Bearer {authtoken}"
 	}
 	container = containers[container]
-	url = f"{settings['dockerurl']}/api/endpoints/1/docker/containers/{container['id']}/stop"
+	url = f"{settings['docker']['url']}/api/endpoints/1/docker/containers/{container['id']}/stop"
 	async with session.post(url, headers=headers) as r:
 
 		if r.status == 204:
