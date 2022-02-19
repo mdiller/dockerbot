@@ -8,7 +8,7 @@ COPY . /code
 WORKDIR /code
 
 # install dependencies
-RUN pip --disable-pip-version-check install -r requirements.txt 2>&1 | grep -v "pip as the 'root' user"
+RUN pip --disable-pip-version-check install -r requirements.txt 2>&1 | grep --line-buffered -v "pip as the 'root' user"
 
 # command to run on container start
 CMD [ "python", "./dockerbot.py" ] 
