@@ -1,0 +1,7 @@
+services:
+  main:
+    container_name: dockerbot
+    build: .
+    volumes:
+      - ./settings.json:/code/settings.json
+      - ./containers.json:/code/containers.json
