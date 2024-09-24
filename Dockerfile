@@ -1,5 +1,5 @@
 # set base image (host OS)
-FROM python:3.8
+FROM python:3.9
 
 # copy the content of the local src directory to the working directory
 COPY . /code
